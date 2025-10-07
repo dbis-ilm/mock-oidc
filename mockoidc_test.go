@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
+	mockoidc "github.com/dbis-ilm/mock-oidc"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/oauth2-proxy/mockoidc"
 	"github.com/stretchr/testify/assert"
 )
 

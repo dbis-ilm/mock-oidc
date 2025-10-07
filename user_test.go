@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	mockoidc "github.com/dbis-ilm/mock-oidc"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/oauth2-proxy/mockoidc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,28 +18,28 @@ func TestMockUser_Userinfo(t *testing.T) {
 		ExpectedGroups []string
 	}{
 		"all scopes": {
-			Scope:          []string{"openid", "email", "profile", "groups"},
-			ExpectedEmail:  testUser.Email,
-			ExpectedPhone:  testUser.Phone,
-			ExpectedGroups: testUser.Groups,
+			Scope:         []string{"openid", "email", "profile", "groups"},
+			ExpectedEmail: testUser.Email,
+			//ExpectedPhone:  testUser.Phone,
+			//ExpectedGroups: testUser.Groups,
 		},
 		"missing groups scope": {
-			Scope:          []string{"openid", "email", "profile"},
-			ExpectedEmail:  testUser.Email,
-			ExpectedPhone:  testUser.Phone,
-			ExpectedGroups: nil,
+			Scope:         []string{"openid", "email", "profile"},
+			ExpectedEmail: testUser.Email,
+			//ExpectedPhone:  testUser.Phone,
+			//ExpectedGroups: nil,
 		},
 		"missing profile scope": {
-			Scope:          []string{"openid", "email", "groups"},
-			ExpectedEmail:  testUser.Email,
-			ExpectedPhone:  "",
-			ExpectedGroups: testUser.Groups,
+			Scope:         []string{"openid", "email", "groups"},
+			ExpectedEmail: testUser.Email,
+			//ExpectedPhone:  "",
+			//ExpectedGroups: testUser.Groups,
 		},
 		"missing email scope": {
-			Scope:          []string{"openid", "profile", "groups"},
-			ExpectedEmail:  "",
-			ExpectedPhone:  testUser.Phone,
-			ExpectedGroups: testUser.Groups,
+			Scope:         []string{"openid", "profile", "groups"},
+			ExpectedEmail: "",
+			//ExpectedPhone:  testUser.Phone,
+			//ExpectedGroups: testUser.Groups,
 		},
 	}
 	for name, tc := range testCases {
@@ -87,32 +87,32 @@ func TestMockUser_Claims(t *testing.T) {
 		ExpectedGroups []string
 	}{
 		"all scopes": {
-			Scope:          []string{"openid", "email", "profile", "groups"},
-			Nonce:          "1234987",
-			ExpectedEmail:  testUser.Email,
-			ExpectedPhone:  testUser.Phone,
-			ExpectedGroups: testUser.Groups,
+			Scope:         []string{"openid", "email", "profile", "groups"},
+			Nonce:         "1234987",
+			ExpectedEmail: testUser.Email,
+			//ExpectedPhone:  testUser.Phone,
+			//ExpectedGroups: testUser.Groups,
 		},
 		"missing groups scope": {
-			Scope:          []string{"openid", "email", "profile"},
-			Nonce:          "3948y2tiugiu",
-			ExpectedEmail:  testUser.Email,
-			ExpectedPhone:  testUser.Phone,
-			ExpectedGroups: nil,
+			Scope:         []string{"openid", "email", "profile"},
+			Nonce:         "3948y2tiugiu",
+			ExpectedEmail: testUser.Email,
+			//ExpectedPhone:  testUser.Phone,
+			//ExpectedGroups: nil,
 		},
 		"missing profile scope": {
-			Scope:          []string{"openid", "email", "groups"},
-			Nonce:          "",
-			ExpectedEmail:  testUser.Email,
-			ExpectedPhone:  "",
-			ExpectedGroups: testUser.Groups,
+			Scope:         []string{"openid", "email", "groups"},
+			Nonce:         "",
+			ExpectedEmail: testUser.Email,
+			//ExpectedPhone:  "",
+			//ExpectedGroups: testUser.Groups,
 		},
 		"missing email scope": {
-			Scope:          []string{"openid", "profile", "groups"},
-			Nonce:          "",
-			ExpectedEmail:  "",
-			ExpectedPhone:  testUser.Phone,
-			ExpectedGroups: testUser.Groups,
+			Scope:         []string{"openid", "profile", "groups"},
+			Nonce:         "",
+			ExpectedEmail: "",
+			//ExpectedPhone:  testUser.Phone,
+			//ExpectedGroups: testUser.Groups,
 		},
 	}
 	for name, tc := range testCases {

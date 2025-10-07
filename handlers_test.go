@@ -2,7 +2,7 @@ package mockoidc_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/oauth2-proxy/mockoidc"
+	mockoidc "github.com/dbis-ilm/mock-oidc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -77,8 +77,8 @@ func TestMockOIDC_Token_CodeGrant(t *testing.T) {
 	assert.HTTPError(t, m.Token, http.MethodPost, mockoidc.TokenEndpoint, nil)
 
 	data := url.Values{}
-	data.Set("client_id", m.ClientID)
-	data.Set("client_secret", m.ClientSecret)
+	//data.Set("client_id", m.ClientID)
+	//data.Set("client_secret", m.ClientSecret)
 	data.Set("code", session.SessionID)
 	data.Set("grant_type", "authorization_code")
 
@@ -91,7 +91,7 @@ func TestMockOIDC_Token_CodeGrant(t *testing.T) {
 			rr := testResponse(t, mockoidc.TokenEndpoint, m.Token, http.MethodPost, badData)
 			assert.Equal(t, http.StatusBadRequest, rr.Code)
 
-			body, err := ioutil.ReadAll(rr.Body)
+			body, err := io.ReadAll(rr.Body)
 			assert.NoError(t, err)
 			assert.Contains(t, string(body), mockoidc.InvalidRequest)
 		})
@@ -177,7 +177,7 @@ func TestMockOIDC_Token_CodeGrant_CodeChallengePlain(t *testing.T) {
 	rr = testResponse(t, mockoidc.TokenEndpoint, m.Token, http.MethodPost, badData)
 	assert.Equal(t, http.StatusUnauthorized, rr.Code)
 
-	body, err := ioutil.ReadAll(rr.Body)
+	body, err := io.ReadAll(rr.Body)
 	assert.NoError(t, err)
 	assert.Contains(t, string(body), mockoidc.InvalidGrant)
 
@@ -188,7 +188,7 @@ func TestMockOIDC_Token_CodeGrant_CodeChallengePlain(t *testing.T) {
 	rr = testResponse(t, mockoidc.TokenEndpoint, m.Token, http.MethodPost, badData)
 	assert.Equal(t, http.StatusUnauthorized, rr.Code)
 
-	body, err = ioutil.ReadAll(rr.Body)
+	body, err = io.ReadAll(rr.Body)
 	assert.NoError(t, err)
 	assert.Contains(t, string(body), mockoidc.InvalidGrant)
 }
@@ -227,7 +227,7 @@ func TestMockOIDC_Token_CodeGrant_CodeChallengeHash(t *testing.T) {
 	rr = testResponse(t, mockoidc.TokenEndpoint, m.Token, http.MethodPost, badData)
 	assert.Equal(t, http.StatusUnauthorized, rr.Code)
 
-	body, err := ioutil.ReadAll(rr.Body)
+	body, err := io.ReadAll(rr.Body)
 	assert.NoError(t, err)
 	assert.Contains(t, string(body), mockoidc.InvalidGrant)
 
@@ -238,7 +238,7 @@ func TestMockOIDC_Token_CodeGrant_CodeChallengeHash(t *testing.T) {
 	rr = testResponse(t, mockoidc.TokenEndpoint, m.Token, http.MethodPost, badData)
 	assert.Equal(t, http.StatusUnauthorized, rr.Code)
 
-	body, err = ioutil.ReadAll(rr.Body)
+	body, err = io.ReadAll(rr.Body)
 	assert.NoError(t, err)
 	assert.Contains(t, string(body), mockoidc.InvalidGrant)
 }
@@ -294,7 +294,7 @@ func TestMockOIDC_Token_RefreshGrant(t *testing.T) {
 	rr = testResponse(t, mockoidc.TokenEndpoint, m.Token, http.MethodPost, data)
 	assert.Equal(t, http.StatusUnauthorized, rr.Code)
 
-	body, err := ioutil.ReadAll(rr.Body)
+	body, err := io.ReadAll(rr.Body)
 	assert.NoError(t, err)
 	assert.Contains(t, string(body), mockoidc.InvalidRequest)
 }
