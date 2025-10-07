@@ -6,6 +6,10 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// Fork:
+// NOTE apparently the Phone, Address and Groups field may not be correctly formatted in inside an id_token
+// 		therefore i removed them from beeing included.
+
 // User represents a mock user that the server will grant Oauth tokens for.
 // Calls to the `authorization_endpoint` will pop any mock Users added to the
 // `UserQueue`. Otherwise `DefaultUser()` is returned.
@@ -65,9 +69,9 @@ func (u *MockUser) Userinfo(scope []string) ([]byte, error) {
 	info := &mockUserinfo{
 		Email:             user.Email,
 		PreferredUsername: user.PreferredUsername,
-		Phone:             user.Phone,
-		Address:           user.Address,
-		Groups:            user.Groups,
+		//Phone:             user.Phone,
+		//Address:           user.Address,
+		//Groups:            user.Groups,
 	}
 
 	return json.Marshal(info)
@@ -91,9 +95,9 @@ func (u *MockUser) Claims(scope []string, claims *IDTokenClaims) (jwt.Claims, er
 		Email:             user.Email,
 		EmailVerified:     user.EmailVerified,
 		PreferredUsername: user.PreferredUsername,
-		Phone:             user.Phone,
-		Address:           user.Address,
-		Groups:            user.Groups,
+		//Phone:             user.Phone,
+		//Address:           user.Address,
+		//Groups:            user.Groups,
 	}, nil
 }
 

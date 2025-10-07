@@ -128,11 +128,15 @@ func (m *MockOIDC) Authorize(rw http.ResponseWriter, req *http.Request) {
 }
 
 type tokenResponse struct {
-	AccessToken  string        `json:"access_token,omitempty"`
-	RefreshToken string        `json:"refresh_token,omitempty"`
-	IDToken      string        `json:"id_token,omitempty"`
-	TokenType    string        `json:"token_type"`
-	ExpiresIn    time.Duration `json:"expires_in"`
+	// Required
+	AccessToken string        `json:"access_token"`
+	TokenType   string        `json:"token_type"`
+	ExpiresIn   time.Duration `json:"expires_in"`
+	Scope       string        `json:"scope"`
+
+	// Optional
+	RefreshToken string `json:"refresh_token,omitempty"`
+	IDToken      string `json:"id_token,omitempty"`
 }
 
 // Token implements the `token_endpoint` in OIDC and responds to requests
@@ -179,7 +183,7 @@ func (m *MockOIDC) Token(rw http.ResponseWriter, req *http.Request) {
 
 	tr := &tokenResponse{
 		RefreshToken: req.Form.Get("refresh_token"),
-		TokenType:    "bearer",
+		TokenType:    "Bearer",
 		ExpiresIn:    m.AccessTTL,
 	}
 	err = m.setTokens(tr, session, grantType)
@@ -187,6 +191,7 @@ func (m *MockOIDC) Token(rw http.ResponseWriter, req *http.Request) {
 		internalServerError(rw, err.Error())
 		return
 	}
+	tr.Scope = strings.Trim(fmt.Sprint(session.Scopes), "[]")
 
 	resp, err := json.Marshal(tr)
 	if err != nil {
@@ -198,22 +203,7 @@ func (m *MockOIDC) Token(rw http.ResponseWriter, req *http.Request) {
 }
 
 func (m *MockOIDC) validateTokenParams(rw http.ResponseWriter, req *http.Request) bool {
-	if !assertPresence([]string{"client_id", "client_secret", "grant_type"}, rw, req) {
-		return false
-	}
-
-	equal := assertEqual("client_id", m.ClientID,
-		InvalidClient, "Invalid client id", rw, req)
-	if !equal {
-		return false
-	}
-	equal = assertEqual("client_secret", m.ClientSecret,
-		InvalidClient, "Invalid client secret", rw, req)
-	if !equal {
-		return false
-	}
-
-	return true
+	return assertPresence([]string{"grant_type"}, rw, req)
 }
 
 func (m *MockOIDC) validateCodeGrant(rw http.ResponseWriter, req *http.Request) (*Session, bool) {
